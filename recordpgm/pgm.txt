@@ -1,0 +1,8 @@
+1 ARRAY & BASIC OPERATIONS
+
+AIM
+Implement a menu-driven program for the following operations on a linear array:
+ ^ Insertion at Beginning
+ ^ Insertion at end
+ ^ Insertion at a specified position
+ 

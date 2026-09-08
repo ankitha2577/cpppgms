@@ -32,6 +32,7 @@ int main()
                 cin >> u;
                 arr.setUB(u);
                 arr.create();
+                cout << arr;
                 break;
             case 2:
                 cout << "Enter the element" << endl;

@@ -1,0 +1,237 @@
+#include <iostream>
+using namespace std;
+
+
+struct Node {
+    int data;
+    Node* prev;
+    Node* next;
+};
+
+
+Node* head = NULL;
+
+// --- INSERTION AT 3 POSITIONS ---
+
+// 1. Insert at Beginning
+void insertBeg(int val) {
+    Node* newNode = new Node();
+    newNode->data = val;
+
+    // If list is empty, node points to itself in both directions
+    if (head == NULL) {
+        newNode->next = newNode;
+        newNode->prev = newNode;
+        head = newNode;
+        cout << "Inserted at beginning.\n";
+        return;
+    }
+
+    Node* last = head->prev; // Shortcut to get the last node!
+
+    newNode->next = head;
+    newNode->prev = last;
+    last->next = newNode;
+    head->prev = newNode;
+    
+    head = newNode; // Make newNode the new head
+    cout << "Inserted at beginning.\n";
+}
+
+// 2. Insert at End
+void insertEnd(int val) {
+    Node* newNode = new Node();
+    newNode->data = val;
+
+    // If list is empty, node points to itself in both directions
+    if (head == NULL) {
+        newNode->next = newNode;
+        newNode->prev = newNode;
+        head = newNode;
+        cout << "Inserted at end.\n";
+        return;
+    }
+
+    Node* last = head->prev; // Shortcut to get the last node!
+
+    // Exact same 4 pointer lines as insertBeg (just don't move head!)
+    newNode->next = head;
+    newNode->prev = last;
+    last->next = newNode;
+    head->prev = newNode;
+
+    cout << "Inserted at end.\n";
+}
+
+// 3. Insert at a Specific Position (1-based index)
+void insertPos(int val, int pos) {
+    if (pos == 1) {
+        insertBeg(val);
+        return;
+    }
+
+    if (head == NULL) {
+        cout << "Invalid position!\n";
+        return;
+    }
+
+    // Walk to the node JUST BEFORE the target position (pos - 1)
+    Node* temp = head;
+    for (int i = 1; i < pos - 1; i++) {
+        temp = temp->next;
+        if (temp == head) { // Cycled all the way back to the start
+            cout << "Invalid position!\n";
+            return;
+        }
+    }
+
+    Node* newNode = new Node();
+    newNode->data = val;
+
+    // Connect newNode between 'temp' and 'temp->next'
+    newNode->next = temp->next;
+    newNode->prev = temp;
+    temp->next->prev = newNode;
+    temp->next = newNode;
+
+    cout << "Inserted at position " << pos << ".\n";
+}
+
+// --- DELETION AT 3 POSITIONS ---
+
+// 4. Delete from Beginning
+void deleteBeg() {
+    if (head == NULL) {
+        cout << "List is empty!\n";
+        return;
+    }
+
+    // If there is only 1 node in the list
+    if (head->next == head) {
+        delete head;
+        head = NULL;
+        cout << "Deleted from beginning.\n";
+        return;
+    }
+
+    Node* last = head->prev;
+    Node* temp = head;
+
+    head = head->next; // Move head to the 2nd node
+    head->prev = last; // Connect new head back to last
+    last->next = head; // Connect last forward to new head
+
+    delete temp;
+    cout << "Deleted from beginning.\n";
+}
+
+// 5. Delete from End
+void deleteEnd() {
+    if (head == NULL) {
+        cout << "List is empty!\n";
+        return;
+    }
+
+    // If there is only 1 node in the list
+    if (head->next == head) {
+        delete head;
+        head = NULL;
+        cout << "Deleted from end.\n";
+        return;
+    }
+
+    Node* last = head->prev;       // The node we want to delete
+    Node* secondLast = last->prev; // The node before it
+
+    secondLast->next = head; // Connect 2nd-to-last node to head
+    head->prev = secondLast; // Connect head back to 2nd-to-last node
+
+    delete last;
+    cout << "Deleted from end.\n";
+}
+
+// 6. Delete from a Specific Position (1-based index)
+void deletePos(int pos) {
+    if (head == NULL) {
+        cout << "List is empty!\n";
+        return;
+    }
+
+    if (pos == 1) {
+        deleteBeg();
+        return;
+    }
+
+    // Walk directly TO the node we want to delete
+    Node* temp = head;
+    for (int i = 1; i < pos; i++) {
+        temp = temp->next;
+        if (temp == head) { // Cycled back to start, position doesn't exist
+            cout << "Invalid position!\n";
+            return;
+        }
+    }
+
+    // Bypass 'temp' by connecting its left neighbor to its right neighbor
+    temp->prev->next = temp->next;
+    temp->next->prev = temp->prev;
+
+    delete temp;
+    cout << "Deleted from position " << pos << ".\n";
+}
+
+// --- DISPLAY FUNCTION ---
+void display() {
+    if (head == NULL) {
+        cout << "List is empty!\n";
+        return;
+    }
+
+    Node* temp = head;
+    cout << "(HEAD) <-> ";
+    // Use do-while because temp starts at head and stops when it returns to head
+    do {
+        cout << temp->data << " <-> ";
+        temp = temp->next;
+    } while (temp != head);
+    cout << "(BACK TO HEAD)\n";
+}
+
+// --- MAIN MENU ---
+int main() {
+    int choice, val, pos;
+
+    while (true) {
+        cout << "\n--- DOUBLY CIRCULAR LINKED LIST MENU ---\n";
+        cout << "1. Insert Beginning  2. Insert End  3. Insert Position\n";
+        cout << "4. Delete Beginning  5. Delete End  6. Delete Position\n";
+        cout << "7. Display           8. Exit\n";
+        cout << "Enter choice: ";
+        cin >> choice;
+
+        if (choice == 1) {
+            cout << "Enter value: "; cin >> val;
+            insertBeg(val);
+        } else if (choice == 2) {
+            cout << "Enter value: "; cin >> val;
+            insertEnd(val);
+        } else if (choice == 3) {
+            cout << "Enter value and position: "; cin >> val >> pos;
+            insertPos(val, pos);
+        } else if (choice == 4) {
+            deleteBeg();
+        } else if (choice == 5) {
+            deleteEnd();
+        } else if (choice == 6) {
+            cout << "Enter position to delete: "; cin >> pos;
+            deletePos(pos);
+        } else if (choice == 7) {
+            display();
+        } else if (choice == 8) {
+            break;
+        } else {
+            cout << "Invalid choice!\n";
+        }
+    }
+    return 0;
+}

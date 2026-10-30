@@ -1,4 +1,4 @@
-/*write a program linear search of array and getting the data from the user simple program beginner friendly do not use class and another libraries*/
+
 #include <iostream>
 using namespace std;
 
